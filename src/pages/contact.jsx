@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import SectionHeading from '@/components/ui/SectionHeading';
 import { companyInfo } from '@/data/services';
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function Contact() {
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState('idle'); // 'idle' | 'loading' | 'success' | 'error'
+  const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -13,9 +14,33 @@ export default function Contact() {
     message: '',
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setStatus('loading');
+    setErrorMessage('');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        setStatus('success');
+      } else {
+        setStatus('error');
+        setErrorMessage(result.message || 'Failed to submit inquiry. Please try again.');
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus('error');
+      setErrorMessage('Network error occurred. Please check your connection and try again.');
+    }
   };
 
   return (
@@ -151,23 +176,31 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Inquiries Form in High-Tech Glass Panel */}
+            {/* Inquiries Form connected to Next.js API Backend */}
             <div className="card-glass" style={{ padding: '3rem 2.5rem' }}>
-              {submitted ? (
+              {status === 'success' ? (
                 <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
                   <CheckCircle2 size={48} color="#60A5FA" style={{ margin: '0 auto 1.5rem' }} />
                   <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '1.65rem', fontWeight: 700, color: '#F5F7FA', marginBottom: '0.85rem' }}>
-                    Inquiry Transmitted
+                    Inquiry Dispatched Successfully
                   </h3>
                   <p style={{ color: '#A7B0C0', lineHeight: 1.7, maxWidth: '24rem', margin: '0 auto 1.75rem' }}>
-                    Thank you for reaching out to Aryan Infomedia. This preview submission has been registered.
+                    Thank you, {formData.name}. Your project details have been transmitted directly to our team. We will review and reply within one business day.
                   </p>
                   <button
-                    onClick={() => setSubmitted(false)}
+                    onClick={() => {
+                      setStatus('idle');
+                      setFormData({
+                        name: '',
+                        email: '',
+                        service: 'Software Development & Management',
+                        message: '',
+                      });
+                    }}
                     className="btn-secondary"
                     style={{ fontSize: '0.875rem' }}
                   >
-                    Submit Another Inquiry
+                    Send Another Message
                   </button>
                 </div>
               ) : (
@@ -175,6 +208,13 @@ export default function Contact() {
                   <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '1.35rem', fontWeight: 700, color: '#F5F7FA', marginBottom: '0.25rem' }}>
                     Transmit an Inquiry
                   </h3>
+
+                  {status === 'error' && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.85rem 1rem', borderRadius: '0.5rem', color: '#FCA5A5', fontSize: '0.875rem' }}>
+                      <AlertCircle size={18} style={{ flexShrink: 0 }} />
+                      <span>{errorMessage}</span>
+                    </div>
+                  )}
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#F5F7FA', marginBottom: '0.45rem', fontFamily: "'Space Grotesk', sans-serif", letterSpacing: '0.04em' }}>
@@ -275,9 +315,23 @@ export default function Contact() {
                     />
                   </div>
 
-                  <button type="submit" className="btn-primary" style={{ marginTop: '0.5rem', width: '100%' }}>
-                    <span>Transmit Inquiry</span>
-                    <Send size={16} />
+                  <button
+                    type="submit"
+                    disabled={status === 'loading'}
+                    className="btn-primary"
+                    style={{ marginTop: '0.5rem', width: '100%', opacity: status === 'loading' ? 0.7 : 1 }}
+                  >
+                    {status === 'loading' ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        <span>Transmitting Inquiry...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Transmit Inquiry</span>
+                        <Send size={16} />
+                      </>
+                    )}
                   </button>
                 </form>
               )}
