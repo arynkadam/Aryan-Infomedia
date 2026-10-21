@@ -1,8 +1,7 @@
 name = "aryaninfomedia1"
-main = ".open-next/worker.js"
+main = "worker.js"
 compatibility_date = "2024-09-23"
 
-# Assets configuration for modern Cloudflare Workers (replaces deprecated [site])
 [assets]
 directory = "./out"
 binding = "ASSETS"
