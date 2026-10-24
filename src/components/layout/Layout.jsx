@@ -1,6 +1,7 @@
 import Navbar from './Navbar';
 import Footer from './Footer';
 import ContinuousAtmosphereBackground from './ContinuousAtmosphereBackground';
+import ScrollActiveCTA from '@/components/ui/ScrollActiveCTA';
 import Head from 'next/head';
 
 export default function Layout({ children, title, description }) {
@@ -45,6 +46,9 @@ export default function Layout({ children, title, description }) {
         sitting comfortably atop the page termination.
       */}
       <Footer />
+
+      {/* Contextual floating CTA triggered after 20 seconds of active scrolling */}
+      <ScrollActiveCTA />
     </div>
   );
 }

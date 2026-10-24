@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Layout from '@/components/layout/Layout';
 import Hero from '@/components/sections/Hero';
+import ScrollDepthSection from '@/components/layout/ScrollDepthSection';
 import SectionHeading from '@/components/ui/SectionHeading';
 import ServiceCard from '@/components/ui/ServiceCard';
 import CTAStrip from '@/components/sections/CTAStrip';
@@ -14,13 +15,14 @@ export default function Home() {
       title="Technology & Digital Marketing Solutions"
       description="Aryan Infomedia provides custom software development, Meta Ads, SEO, business automation, and comprehensive digital marketing for growing and established businesses."
     >
-      {/* 1. Hero Section (Stage 01: Hero Gateway) */}
-      <div id="hero">
+      {/* 1. Hero Section (Stage 01: Hero Gateway) — depth exit on scroll */}
+      <ScrollDepthSection sectionId="hero" isFirst>
         <Hero />
-      </div>
+      </ScrollDepthSection>
 
-      {/* 2. Core Capabilities (Stage 02: Geometric Expansion) */}
-      <section id="services" className="section-padding" style={{ position: 'relative', zIndex: 5 }}>
+      {/* 2. Core Capabilities (Stage 02: Geometric Expansion) — circular reveal entrance */}
+      <ScrollDepthSection sectionId="services" style={{ zIndex: 5, scrollMarginTop: '6rem' }}>
+        <section className="section-padding" style={{ position: 'relative', scrollMarginTop: '6rem' }}>
         <div className="container-tight">
           <SectionHeading
             eyebrow="CAPABILITIES // 01"
@@ -40,17 +42,31 @@ export default function Home() {
             ))}
           </div>
 
+          {/* Explore Capabilities Action Button */}
           <div style={{ textAlign: 'center', marginTop: '4rem' }}>
-            <Link href="/services" className="btn-secondary">
-              <span>View Detailed Service Breakdown</span>
-              <ArrowRight size={16} />
+            <Link
+              href="/services"
+              className="btn-secondary btn-explore-capabilities"
+              aria-label="Explore all capabilities and comprehensive service specifications"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.65rem',
+                fontSize: '0.95rem',
+                padding: '0.85rem 2rem',
+              }}
+            >
+              <span>Explore Capabilities</span>
+              <ArrowRight size={16} className="btn-explore-arrow" />
             </Link>
           </div>
         </div>
-      </section>
+        </section>
+      </ScrollDepthSection>
 
       {/* 3. Why Aryan Infomedia (Stage 03: Structured Matrix) */}
-      <section id="why-us" className="section-padding" style={{ position: 'relative', zIndex: 5 }}>
+      <ScrollDepthSection sectionId="why-us" style={{ zIndex: 5 }}>
+        <section className="section-padding" style={{ position: 'relative' }}>
         <div className="container-tight">
           <SectionHeading
             eyebrow="FOUNDATION // 02"
@@ -141,10 +157,12 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+        </section>
+      </ScrollDepthSection>
 
       {/* 4. Strategic Workflow (Stage 04: Process Trajectory) */}
-      <section id="approach" className="section-padding" style={{ position: 'relative', zIndex: 5 }}>
+      <ScrollDepthSection sectionId="approach" style={{ zIndex: 5 }}>
+        <section className="section-padding" style={{ position: 'relative' }}>
         <div className="container-tight">
           <SectionHeading
             eyebrow="METHODOLOGY // 03"
@@ -195,12 +213,13 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+        </section>
+      </ScrollDepthSection>
 
       {/* 5. CTA Consultation Banner (Stage 05: Harmonic Resolution) */}
-      <div id="contact-cta">
+      <ScrollDepthSection sectionId="contact-cta" isLast style={{ zIndex: 5 }}>
         <CTAStrip />
-      </div>
+      </ScrollDepthSection>
     </Layout>
   );
 }
